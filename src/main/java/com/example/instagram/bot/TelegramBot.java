@@ -74,22 +74,20 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return;
             }
         }//state of checking quotas
+        else {
+            User user = new User();
+            user.setChatId(String.valueOf(update.getMessage().getChatId()));
+            user.setFirstName(update.getMessage().getFrom().getFirstName());
+            user.setLastName(update.getMessage().getFrom().getLastName());
+            user.setUserName(update.getMessage().getFrom().getUserName());
+            userRepository.save(user);
+
+        }
 
         if (update.hasMessage()) {
             if (update.getMessage().getText().equals("/start")) {
-                if (userRepository.existsById(String.valueOf(update.getMessage().getChatId()))){
-                    execute(telegramBotService.sendMessage(update));
-                }else {
-                    User user = new User();
-                    user.setChatId(String.valueOf(update.getMessage().getChatId()));
-                    user.setFirstName(update.getMessage().getFrom().getFirstName());
-                    user.setLastName(update.getMessage().getFrom().getLastName());
-                    user.setUserName(update.getMessage().getFrom().getUserName());
-                    userRepository.save(user);
-
-                    execute(telegramBotService.sendMessage(update));
-                }
-            }//user create
+                execute(telegramBotService.sendMessage(update));
+            }
 
             if ((update.getMessage().getText().startsWith("https://www.instagram.com/")) || (update.getMessage().getText().startsWith("https://instagram.com"))) {
 
@@ -117,11 +115,10 @@ public class TelegramBot extends TelegramLongPollingBot {
                         InputStream inputStream = telegramBotService.sendInstagramImage(update, info);
                         execute(SendPhoto.builder().chatId(String.valueOf(update.getMessage().getChatId())).photo(new InputFile(inputStream,"photo")).build());
                     }
-                    else if((instagram.getType().equals("Post-Video"))||(instagram.getType().equals("Backup story"))){
+                    else if((instagram.getType().equals("Post-Video"))){
                         InputStream inputStream = telegramBotService.sendInstagramVideo(update, info);
                         execute(SendVideo.builder().chatId(String.valueOf(update.getMessage().getChatId())).video(new InputFile(inputStream,"video")).build());
-                    }
-                    else execute(SendMessage.builder().chatId(String.valueOf(update.getMessage().getChatId())).text("For now we can't download it ").build());
+                    } else execute(SendMessage.builder().chatId(String.valueOf(update.getMessage().getChatId())).text("For now we can't download it ").build());
                 }catch (Exception e){
                     log.error(String.valueOf(e));
                     e.printStackTrace();

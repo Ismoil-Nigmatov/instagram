@@ -3,7 +3,6 @@ package com.example.instagram.bot;
 import com.example.instagram.entity.Info;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 
@@ -32,4 +31,6 @@ public interface TelegramBotService {
     List<InputMedia> sendTiktokImage(Update update, Info info);
 
     //////////////////////////////////////////////////////////////////////TIKTOK
+
+    
 }
