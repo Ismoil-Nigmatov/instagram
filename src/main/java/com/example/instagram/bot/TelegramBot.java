@@ -127,7 +127,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             }
 
-            if (update.getMessage().getText().startsWith("https://vt.tiktok.com/")) {
+            if (update.getMessage().getText().startsWith("https://vt.tiktok.com/")||(update.getMessage().getText().startsWith("https://www.tiktok.com/"))) {
 
                 execute(SendMessage.builder().text("Wait, Please...").chatId(String.valueOf(update.getMessage().getChatId())).build());
 
