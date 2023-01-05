@@ -23,7 +23,8 @@ public class Info {
     private Long id;
 
     @Column(length = 10000)
-    private String media;
+    @ElementCollection
+    private List<String> media;
 
     @Column(length = 10000)
     private String video;

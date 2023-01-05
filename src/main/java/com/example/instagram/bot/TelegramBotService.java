@@ -2,10 +2,12 @@ package com.example.instagram.bot;
 
 import com.example.instagram.entity.Info;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -28,6 +30,8 @@ public interface TelegramBotService {
     InputStream sendTiktokVideo(Update update, Info info);
 
     List<InputMedia> sendTiktokImage(Update update, Info info);
+
+    List<MultipartFile> sendInstagramCarousel(Update update, Info info) throws IOException;
 
     //////////////////////////////////////////////////////////////////////TIKTOK
 

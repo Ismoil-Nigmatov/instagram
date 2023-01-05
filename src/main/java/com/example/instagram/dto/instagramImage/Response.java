@@ -1,14 +1,14 @@
-package com.example.instagram.dto.instagram;
+package com.example.instagram.dto.instagramImage;
 
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class Response{
+public class Response {
 	private String thumbnail;
 	private String Type;
 	private String API;
-	private List<String> media;
+	private String media;
 	private String title;
 }

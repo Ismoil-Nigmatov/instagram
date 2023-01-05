@@ -12,6 +12,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -20,12 +21,15 @@ import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
+import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
+import org.telegram.telegrambots.meta.api.objects.media.InputMediaVideo;
 
 import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -105,20 +109,54 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                     String body = response.body();
 
-                    Response instagram = new Gson().fromJson(body, Response.class);
 
-                    Info info=new Info();
-                    info.setMedia(instagram.getMedia());
-                    infoRepository.save(info);
+                    if (body.contains("[")){
+                        Response instagram = new Gson().fromJson(body, com.example.instagram.dto.instagram.Response.class);
 
-                    if (instagram.getType().equals("Post-Image")){
-                        InputStream inputStream = telegramBotService.sendInstagramImage(update, info);
-                        execute(SendPhoto.builder().chatId(String.valueOf(update.getMessage().getChatId())).photo(new InputFile(inputStream,"photo")).build());
+                        Info info=new Info();
+                        info.setMedia(instagram.getMedia());
+                        infoRepository.save(info);
+
+                        List<MultipartFile> multipartFiles = telegramBotService.sendInstagramCarousel(update, info);
+                        List<InputMedia> inputMediaList=new ArrayList<>();
+
+                        for (MultipartFile multipartFile : multipartFiles) {
+                            if (multipartFile.getContentType().contains("video")){
+                                InputMedia inputMedia=new InputMediaVideo();
+                                InputStream inputStream = multipartFile.getInputStream();
+                                inputMedia.setMedia(inputStream,multipartFile.getOriginalFilename());
+                                inputMediaList.add(inputMedia);
+                            }else {
+                                InputMedia inputMedia=new InputMediaPhoto();
+                                InputStream inputStream= multipartFile.getInputStream();
+                                inputMedia.setMedia(inputStream,multipartFile.getOriginalFilename());
+                                inputMediaList.add(inputMedia);
+                            }
+                        }
+
+                        execute(SendMediaGroup.builder().medias(inputMediaList).chatId(String.valueOf(update.getMessage().getChatId())).build());
                     }
-                    else if((instagram.getType().equals("Post-Video"))){
-                        InputStream inputStream = telegramBotService.sendInstagramVideo(update, info);
-                        execute(SendVideo.builder().chatId(String.valueOf(update.getMessage().getChatId())).video(new InputFile(inputStream,"video")).build());
-                    } else execute(SendMessage.builder().chatId(String.valueOf(update.getMessage().getChatId())).text("For now we can't download it ").build());
+                    else {
+                        com.example.instagram.dto.instagramImage.Response instagram = new Gson().fromJson(body,com.example.instagram.dto.instagramImage.Response.class);
+
+                        Info info = new Info();
+                        info.setMedia(List.of(instagram.getMedia()));
+                        infoRepository.save(info);
+
+                        if (instagram.getType().equals("Post-Image")) {
+                            InputStream inputStream = telegramBotService.sendInstagramImage(update, info);
+                            execute(SendPhoto.builder().chatId(String.valueOf(update.getMessage().getChatId())).photo(new InputFile(inputStream, "photo")).build());
+                        }
+                        else if ((instagram.getType().equals("Post-Video"))) {
+                            InputStream inputStream = telegramBotService.sendInstagramVideo(update, info);
+                            execute(SendVideo.builder().chatId(String.valueOf(update.getMessage().getChatId())).video(new InputFile(inputStream, "video")).build());
+                        }
+                        else if (instagram.getType().equals("Story-Video")) {
+                            InputStream inputStream = telegramBotService.sendInstagramVideo(update, info);
+                            execute(SendVideo.builder().chatId(String.valueOf(update.getMessage().getChatId())).video(new InputFile(inputStream, "story")).build());
+                        }
+                        else execute(SendMessage.builder().chatId(String.valueOf(update.getMessage().getChatId())).text("For now we can't download it ").build());
+                    }
                 }catch (Exception e){
                     log.error(String.valueOf(e));
                     e.printStackTrace();
@@ -139,7 +177,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                             .method("GET", HttpRequest.BodyPublishers.noBody())
                             .build();
                     HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-
                     String body = response.body();
 
                     if (body.contains("images")){
