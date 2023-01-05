@@ -1,9 +1,12 @@
 package com.example.instagram.entity;
 
 import lombok.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author "ISMOIL NIGMATOV"
@@ -23,7 +26,7 @@ public class Info {
     private Long id;
 
     @Column(length = 10000)
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> media;
 
     @Column(length = 10000)
@@ -31,5 +34,6 @@ public class Info {
 
     @Column(length = 10000)
     @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<String> images;
 }

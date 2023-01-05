@@ -61,7 +61,6 @@ public class AuthController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/info")
-    @Transactional
     public ResponseEntity<?> getInfos(@RequestParam String chatId){
         User user = userRepository.findById(chatId).orElseThrow(null);
         List<Info> infos = user.getInfos();
