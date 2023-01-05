@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 
@@ -60,6 +61,7 @@ public class AuthController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/info")
+    @Transactional
     public ResponseEntity<?> getInfos(@RequestParam String chatId){
         User user = userRepository.findById(chatId).orElseThrow(null);
         List<Info> infos = user.getInfos();
