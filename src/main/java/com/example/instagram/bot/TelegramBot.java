@@ -258,6 +258,156 @@ public class TelegramBot extends TelegramLongPollingBot {
                     throw new RuntimeException(e);
                 }
             }
+
+            if(update.getMessage().getText().startsWith("https://www.youtube.com/shorts/")){
+                execute(SendMessage.builder().text("Wait, Please...").chatId(String.valueOf(update.getMessage().getChatId())).build());
+
+                try {
+
+                    AsyncHttpClient client = new DefaultAsyncHttpClient();
+                    client.prepare("GET", "https://ytstream-download-youtube-videos.p.rapidapi.com/dl?id=" + update.getMessage().getText().substring(31))
+                            .setHeader("X-RapidAPI-Key", "8196fbbdfamsh6929d53aa1ecf11p13dd2ejsn2599b79bab13")
+                            .setHeader("X-RapidAPI-Host", "ytstream-download-youtube-videos.p.rapidapi.com")
+                            .execute()
+                            .toCompletableFuture()
+                            .thenAccept(response -> {
+                                try {
+                                    String body = response.getResponseBody();
+                                    YouTube youTube = new Gson().fromJson(body, YouTube.class);
+
+                                    List<FormatsItem> formats = youTube.getFormats();
+                                    FormatsItem formatsItem = new FormatsItem();
+                                    for (int i = 0; i < formats.size() - 1; i++) {
+                                        if (formats.get(i).getHeight() > formats.get(i + 1).getHeight()) {
+                                            formatsItem = formats.get(i);
+                                        } else {
+                                            formatsItem = formats.get(i + 1);
+                                        }
+                                    }
+
+                                    Info info = new Info();
+                                    info.setYoutubeURL(formatsItem.getUrl());
+                                    infoRepository.save(info);
+
+                                    InputStream inputStream = telegramBotService.sendYoutubeVideo(update, info);
+                                    execute(SendVideo.builder().chatId(update.getMessage().getChatId().toString()).video(new InputFile(inputStream, "youtubeVideo")).build());
+                                } catch (Exception e) {
+                                    log.error(String.valueOf(e));
+                                    try {
+                                        execute(SendMessage.builder().text("Failed to download video").chatId(String.valueOf(update.getMessage().getChatId())).build());
+                                        execute(SendMessage.builder().text("Request Entity Too Large").chatId(String.valueOf(update.getMessage().getChatId())).build());
+                                    } catch (TelegramApiException ex) {
+                                        throw new RuntimeException(ex);
+                                    }
+                                }
+                            })
+                            .join();
+
+                    client.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if (update.getMessage().getText().startsWith("https://youtu.be/")){
+                execute(SendMessage.builder().text("Wait, Please...").chatId(String.valueOf(update.getMessage().getChatId())).build());
+
+                try {
+
+                    AsyncHttpClient client = new DefaultAsyncHttpClient();
+                    client.prepare("GET", "https://ytstream-download-youtube-videos.p.rapidapi.com/dl?id=" + update.getMessage().getText().substring(17))
+                            .setHeader("X-RapidAPI-Key", "8196fbbdfamsh6929d53aa1ecf11p13dd2ejsn2599b79bab13")
+                            .setHeader("X-RapidAPI-Host", "ytstream-download-youtube-videos.p.rapidapi.com")
+                            .execute()
+                            .toCompletableFuture()
+                            .thenAccept(response -> {
+                                try {
+                                    String body = response.getResponseBody();
+                                    YouTube youTube = new Gson().fromJson(body, YouTube.class);
+
+                                    List<FormatsItem> formats = youTube.getFormats();
+                                    FormatsItem formatsItem = new FormatsItem();
+                                    for (int i = 0; i < formats.size() - 1; i++) {
+                                        if (formats.get(i).getHeight() > formats.get(i + 1).getHeight()) {
+                                            formatsItem = formats.get(i);
+                                        } else {
+                                            formatsItem = formats.get(i + 1);
+                                        }
+                                    }
+
+                                    Info info = new Info();
+                                    info.setYoutubeURL(formatsItem.getUrl());
+                                    infoRepository.save(info);
+
+                                    InputStream inputStream = telegramBotService.sendYoutubeVideo(update, info);
+                                    execute(SendVideo.builder().chatId(update.getMessage().getChatId().toString()).video(new InputFile(inputStream, "youtubeVideo")).build());
+                                } catch (Exception e) {
+                                    log.error(String.valueOf(e));
+                                    try {
+                                        execute(SendMessage.builder().text("Failed to download video").chatId(String.valueOf(update.getMessage().getChatId())).build());
+                                        execute(SendMessage.builder().text("Request Entity Too Large").chatId(String.valueOf(update.getMessage().getChatId())).build());
+                                    } catch (TelegramApiException ex) {
+                                        throw new RuntimeException(ex);
+                                    }
+                                }
+                            })
+                            .join();
+
+                    client.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if (update.getMessage().getText().startsWith("https://youtube.com/shorts/")){
+                execute(SendMessage.builder().text("Wait, Please...").chatId(String.valueOf(update.getMessage().getChatId())).build());
+
+                try {
+
+                    AsyncHttpClient client = new DefaultAsyncHttpClient();
+                    client.prepare("GET", "https://ytstream-download-youtube-videos.p.rapidapi.com/dl?id=" + update.getMessage().getText().substring(27,38))
+                            .setHeader("X-RapidAPI-Key", "8196fbbdfamsh6929d53aa1ecf11p13dd2ejsn2599b79bab13")
+                            .setHeader("X-RapidAPI-Host", "ytstream-download-youtube-videos.p.rapidapi.com")
+                            .execute()
+                            .toCompletableFuture()
+                            .thenAccept(response -> {
+                                try {
+                                    String body = response.getResponseBody();
+                                    YouTube youTube = new Gson().fromJson(body, YouTube.class);
+
+                                    List<FormatsItem> formats = youTube.getFormats();
+                                    FormatsItem formatsItem = new FormatsItem();
+                                    for (int i = 0; i < formats.size() - 1; i++) {
+                                        if (formats.get(i).getHeight() > formats.get(i + 1).getHeight()) {
+                                            formatsItem = formats.get(i);
+                                        } else {
+                                            formatsItem = formats.get(i + 1);
+                                        }
+                                    }
+
+                                    Info info = new Info();
+                                    info.setYoutubeURL(formatsItem.getUrl());
+                                    infoRepository.save(info);
+
+                                    InputStream inputStream = telegramBotService.sendYoutubeVideo(update, info);
+                                    execute(SendVideo.builder().chatId(update.getMessage().getChatId().toString()).video(new InputFile(inputStream, "youtubeVideo")).build());
+                                } catch (Exception e) {
+                                    log.error(String.valueOf(e));
+                                    try {
+                                        execute(SendMessage.builder().text("Failed to download video").chatId(String.valueOf(update.getMessage().getChatId())).build());
+                                        execute(SendMessage.builder().text("Request Entity Too Large").chatId(String.valueOf(update.getMessage().getChatId())).build());
+                                    } catch (TelegramApiException ex) {
+                                        throw new RuntimeException(ex);
+                                    }
+                                }
+                            })
+                            .join();
+
+                    client.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 }
