@@ -36,4 +36,7 @@ public class Info {
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<String> images;
+
+    @Column(length = 10000)
+    private String youtubeURL;
 }

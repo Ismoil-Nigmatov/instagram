@@ -35,5 +35,5 @@ public interface TelegramBotService {
 
     //////////////////////////////////////////////////////////////////////TIKTOK
 
-    
+    InputStream sendYoutubeVideo(Update update, Info info);
 }
