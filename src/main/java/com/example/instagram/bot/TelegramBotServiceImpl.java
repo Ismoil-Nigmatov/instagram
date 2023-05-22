@@ -4,6 +4,7 @@ import com.example.instagram.entity.Info;
 import com.example.instagram.entity.User;
 import com.example.instagram.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -13,12 +14,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,6 +29,7 @@ import java.util.Objects;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TelegramBotServiceImpl implements TelegramBotService {
 
     public RestTemplate restTemplate() {
@@ -151,4 +152,21 @@ public class TelegramBotServiceImpl implements TelegramBotService {
     }
 
     //////////////////////////////////////////////////////////////////////TIKTOK
+
+
+    @Override
+    public InputStream sendYoutubeVideo(Update update, Info info) {
+
+        try {
+            URL url = new URL(info.getYoutubeURL());
+            URLConnection connection = url.openConnection();
+
+            InputStream inputStream = connection.getInputStream();
+            System.out.println(inputStream.available());
+            return inputStream;
+        }catch (Exception e){
+            log.error(e.toString());
+        }
+        return null;
+    }
 }

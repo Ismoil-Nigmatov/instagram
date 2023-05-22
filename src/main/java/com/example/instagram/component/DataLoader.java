@@ -10,8 +10,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
-
 /**
  * @author "ISMOIL NIGMATOV"
  * @created 12:15 PM on 10/8/2022
