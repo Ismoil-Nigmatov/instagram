@@ -9,12 +9,15 @@ import com.example.instagram.entity.User;
 import com.example.instagram.repository.InfoRepository;
 import com.example.instagram.repository.UserRepository;
 import com.google.gson.Gson;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -47,7 +50,13 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@ConfigurationProperties(prefix = "telegram.bot")
+@Getter
+@Setter
 public class TelegramBot extends TelegramLongPollingBot {
+
+    private int fileSizeLimit;
+    private List<String> allowedUpdates;
 
     private final UserRepository userRepository;
 
